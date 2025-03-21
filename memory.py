@@ -1,50 +1,8 @@
-"""Memory, puzzle game of number pairs.
-
-Exercises:
-
-1. Count and print how many taps occur.
-2. Decrease the number of tiles to a 4x4 grid.
-3. Detect when all tiles are revealed.
-4. Center single-digit tile.
-5. Use letters instead of tiles.
-"""
-
-from random import *
-from turtle import *
-
-from freegames import path
-
-car = path('car.gif')
-tiles = list(range(32)) * 2
-state = {'mark': None}
-hide = [True] * 64
-
-
-def square(x, y):
-    """Draw white square with black outline at (x, y)."""
-    up()
-    goto(x, y)
-    down()
-    color('black', 'white')
-    begin_fill()
-    for count in range(4):
-        forward(50)
-        left(90)
-    end_fill()
-
-
-def index(x, y):
-    """Convert (x, y) coordinates to tiles index."""
-    return int((x + 200) // 50 + ((y + 200) // 50) * 8)
-
-
-def xy(count):
-    """Convert tiles count to (x, y) coordinates."""
-    return (count % 8) * 50 - 200, (count // 8) * 50 - 200
-
+# Variable global para contar taps
+tap_count = 0
 
 def tap(x, y):
-    """Update mark and hidden tiles based on tap."""
+    global tap_count  # Accede a la variable global
     spot = index(x, y)
     mark = state['mark']
 
@@ -54,10 +12,10 @@ def tap(x, y):
         hide[spot] = False
         hide[mark] = False
         state['mark'] = None
-
+    # Incrementa el contador de taps
+    tap_count += 1
 
 def draw():
-    """Draw image and tiles."""
     clear()
     goto(0, 0)
     shape(car)
@@ -77,15 +35,11 @@ def draw():
         color('black')
         write(tiles[mark], font=('Arial', 30, 'normal'))
 
+    # Mostrar el número de taps
+    up()
+    goto(-180, 180)  # Ubicación en pantalla para el contador de taps
+    color('black')
+    write(f"Taps: {tap_count}", font=('Arial', 16, 'normal'))
+
     update()
     ontimer(draw, 100)
-
-
-shuffle(tiles)
-setup(420, 420, 370, 0)
-addshape(car)
-hideturtle()
-tracer(False)
-onscreenclick(tap)
-draw()
-done()
